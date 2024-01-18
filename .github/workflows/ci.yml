@@ -1,4 +1,4 @@
-name: CI
+name: Rust CI
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  API_PORT: 8080
 
 jobs:
   build:
