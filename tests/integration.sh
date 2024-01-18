@@ -1,5 +1,5 @@
 ## SET VAR
-PORT=8080
+PORT=8085
 URL=http://localhost:$PORT
 TEST_URLS=("/users" "/null")
 TEST_RETURN_CODE=(200 404)
@@ -57,9 +57,26 @@ end_integration_test () {
   fi
 }
 
+wait_for_server() {
+  local max_attempts=30
+  local delay=5
+  local count=0
+
+  until curl -s "$URL" &>/dev/null; do
+    if [ $count -eq $max_attempts ]; then
+      echo "Timed out waiting for server to start."
+      exit 1
+    fi
+
+    ((count++))
+    echo "Waiting for the server to start... Attempt $count/$max_attempts"
+    sleep $delay
+  done
+}
+
 start_integration_test () {
   start_server
-  sleep 5
+  wait_for_server
   run_test
   end_integration_test
 }
